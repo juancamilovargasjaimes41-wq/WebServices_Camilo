@@ -4,24 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reconocedor MNIST</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
 </head>
 <body>
 
-    <h1>Reconocedor de Números (IA)</h1>
-    <p>Sube una imagen de un número escrito a mano (0-9).</p>
+    <main class="contenedor">
+        <h1>Reconocedor de Números (IA)</h1>
+        <p class="subtitulo">Sube una imagen de un número escrito a mano (0-9).</p>
 
-    <form id="formulario">
-        <input type="file" id="inputImagen" accept="image/*" required>
-        
-        <div class="preview-caja">
-            <img id="preview" style="display: none;" alt="Previsualización">
-            <span id="textoPreview">Vista previa de la imagen</span>
-        </div>
+        <section class="tarjeta">
+            <form id="formulario">
+                <input type="file" id="inputImagen" accept="image/*" required>
 
-        <button type="submit" id="btnEnviar">Analizar Imagen</button>
-    </form>
+                <div class="preview-caja">
+                    <img id="preview" style="display: none;" alt="Previsualización">
+                    <span id="textoPreview">Vista previa de la imagen</span>
+                </div>
 
-    <div id="resultado"></div>
+                <button type="submit" id="btnEnviar">Analizar Imagen</button>
+            </form>
+        </section>
+
+        <div id="resultado"></div>
+    </main>
 
     <script>
         const inputImagen = document.getElementById('inputImagen');
@@ -46,6 +51,13 @@
             }
         });
 
+        // Nivel de color según la confianza
+        function nivelConfianza(confianza) {
+            if (confianza >= 90) return 'nivel-alto';
+            if (confianza >= 60) return 'nivel-medio';
+            return 'nivel-bajo';
+        }
+
         // Enviar la imagen al backend con Fetch
         formulario.addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -65,16 +77,32 @@
                     method: 'POST',
                     body: formData
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok) {
-                    divResultado.innerHTML = `¡Es un ${data.numero_predicho}! <br><small style="color: gray">Confianza: ${data.confianza}%</small>`;
+                    divResultado.innerHTML = `
+                        <div class="resultado-card ${nivelConfianza(data.confianza)}">
+                            <div class="digito">${data.numero_predicho}</div>
+                            <div class="detalle">
+                                <p class="titulo">¡Es un ${data.numero_predicho}!</p>
+                                <div class="barra">
+                                    <div class="barra-relleno" style="width: ${data.confianza}%"></div>
+                                </div>
+                                <p class="confianza-texto">Confianza: ${data.confianza}%</p>
+                            </div>
+                        </div>`;
                 } else {
-                    divResultado.innerHTML = `<span style="color: red">Error: ${data.error}</span>`;
+                    divResultado.innerHTML = `
+                        <div class="resultado-card error">
+                            <div class="detalle"><p class="titulo">Error: ${data.error}</p></div>
+                        </div>`;
                 }
             } catch (error) {
-                divResultado.innerHTML = `<span style="color: red">Error de conexión con el servidor.</span>`;
+                divResultado.innerHTML = `
+                    <div class="resultado-card error">
+                        <div class="detalle"><p class="titulo">Error de conexión con el servidor.</p></div>
+                    </div>`;
             } finally {
                 btnEnviar.disabled = false;
                 btnEnviar.textContent = 'Analizar Imagen';

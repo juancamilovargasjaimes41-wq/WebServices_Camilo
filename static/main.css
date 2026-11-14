@@ -1,45 +1,269 @@
+/* ============ Variables ============ */
+:root {
+    --fondo: #D9DBF1;
+    --superficie: #D0CDD7;
+    --superficie-2: #ACB0BD;
+    --borde: #2b3658;
+    --texto: #0B3948;
+    --texto-suave: #0B3948;
+    --acento: #4e959e;
+    --acento-fuerte: #416165;
+
+    --nivel-alto: #4ade80;
+    --nivel-medio: #fbbf24;
+    --nivel-bajo: #f87171;
+}
+
+/* ============ Base ============ */
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-        sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-        monospace;
+/* ============ Contenedor principal ============ */
+.contenedor {
+    width: 100%;
+    max-width: 520px;
 }
 
-.App {
-    text-align: center;
+h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.6rem, 5vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
 }
 
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.subtitulo {
+    margin: 0 0 24px;
+    color: var(--texto-suave);
+    line-height: 1.5;
 }
 
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
+/* ============ Tarjetas ============ */
+.tarjeta {
+    background: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 20px;
+    transition: transform 0.2s ease, border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.tarjeta:hover {
+    transform: translateY(-2px);
+    border-color: var(--acento);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+/* ============ Formulario ============ */
+#formulario {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+}
+
+#inputImagen {
+    width: 100%;
+    padding: 10px;
+    background: var(--superficie-2);
+    border: 1px dashed var(--borde);
+    border-radius: 10px;
+    color: var(--texto-suave);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+#inputImagen:hover {
+    border-color: var(--acento);
+}
+
+#inputImagen::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 14px;
+    background: var(--acento-fuerte);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+#inputImagen::file-selector-button:hover {
+    background: var(--acento);
+}
+
+/* ============ Vista previa ============ */
+.preview-caja {
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+    min-height: 220px;
+    background: var(--superficie-2);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    overflow: hidden;
+    color: var(--texto-suave);
+    transition: border-color 0.2s ease;
 }
 
-.App-link {
-    color: #61dafb;
+.preview-caja:hover {
+    border-color: var(--acento);
 }
 
-.heart {
-    color: #ff0000;
+#preview {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
 }
 
-.small {
-    font-size: 0.75rem;
+/* ============ Botón ============ */
+#btnEnviar {
+    padding: 14px;
+    background: var(--acento-fuerte);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease;
+}
+
+#btnEnviar:hover:not(:disabled) {
+    background: var(--acento);
+    transform: translateY(-1px);
+}
+
+#btnEnviar:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+#btnEnviar:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* ============ Resultado ============ */
+#resultado {
+    margin-top: 16px;
+}
+
+#resultado:empty {
+    display: none;
+}
+
+.resultado-card {
+    --nivel: var(--nivel-alto);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: var(--superficie);
+    border: 1px solid var(--nivel);
+    border-left-width: 6px;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.resultado-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.resultado-card.nivel-medio {
+    --nivel: var(--nivel-medio);
+}
+
+.resultado-card.nivel-bajo,
+.resultado-card.error {
+    --nivel: var(--nivel-bajo);
+}
+
+.digito {
+    flex-shrink: 0;
+    width: 88px;
+    height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--superficie-2);
+    border-radius: 14px;
+    color: var(--nivel);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.detalle {
+    flex: 1;
+    min-width: 0;
+}
+
+.detalle p {
+    margin: 0 0 8px;
+}
+
+.detalle .titulo {
+    font-weight: 700;
+}
+
+.detalle .confianza-texto {
+    margin: 8px 0 0;
+    color: var(--texto-suave);
+    font-size: 0.9rem;
+}
+
+.barra {
+    height: 8px;
+    background: var(--superficie-2);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.barra-relleno {
+    height: 100%;
+    background: var(--nivel);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+}
+
+.resultado-card.error {
+    color: var(--texto);
+}
+
+/* ============ Accesibilidad ============ */
+:focus-visible {
+    outline: 2px solid var(--acento);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+    }
+}
+
+/* ============ Móvil ============ */
+@media (max-width: 420px) {
+    .resultado-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
